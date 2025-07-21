@@ -1,0 +1,24 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Virtual environment
+venv/
+
+# Flask-related
+instance/
+.env
+
+# IDE/editor settings
+.vscode/
+.idea/
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Uploads and screenshots - generated at runtime
+static/uploads/
+static/screenshots/
+*.zip

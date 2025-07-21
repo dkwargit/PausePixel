@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PausePixel</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='assets/GE7fM-TX0AAxE4h.jpeg') }}" />
+
+</head>
+<body>
+  <div class="gradient-bg"></div>
+
+  <div class="container">
+    <header class="glassmorphic-header">
+      <h1>PausePixel</h1>
+      <p>Capture screenshots from videos at your selected interval and timestamp</p>
+    </header>
+
+    <form action="/upload" method="POST" enctype="multipart/form-data" class="glassmorphic-card" id="uploadForm">
+      <label for="dropBox" id="dropBox" class="custom-file-input">
+        Drop your video here or click to browse
+        <input type="file" name="video" id="videoInput" hidden accept="video/*" />
+      </label>
+
+      <p id="fileNamePreview" class="filename-preview">Upload your File to start working on it.</p>
+
+      <div class="timing-inputs">
+        <label for="start_time">Start time (sec):</label>
+        <input type="number" step="0.1" name="start_time" id="start_time" placeholder="e.g. 5.0" class="custom-input"/>
+
+        <label for="end_time">End time (sec):</label>
+        <input type="number" step="0.1" name="end_time" id="end_time" placeholder="e.g. 20.0" class="custom-input"/>
+      </div>
+
+      <div class="custom-interval-input">
+        <label for="intervalSelect">Capture interval (sec):</label>
+        <input type="number" name="interval" id="intervalSelect" min="0.1" step="any"  placeholder="e.g. 1.5"  class="custom-input"/>
+    </div>
+
+      <button type="submit" class="cta-button pulse rgb-border">Process Video</button>
+    </form>
+
+    {% if screenshots %}
+    <section class="glassmorphic-card">
+      <h2>Captured Screenshots</h2>
+      <div class="masonry-grid">
+        {% for img in screenshots %}
+          <a href="{{ url_for('serve_screenshot', folder=folder, filename=img) }}" target="_blank">
+            <img src="{{ url_for('serve_screenshot', folder=folder, filename=img) }}" />
+          </a>
+        {% endfor %}
+      </div>
+
+      <div class="download-zip-container">
+        <a href="{{ url_for('download_zip', folder=folder) }}" class="download-zip-btn">⬇️ Download All as Zip</a>
+        <span class="or-separator">or</span>
+        <a href="{{ url_for('open_folder', folder=folder) }}" class="go-to-folder-btn">📁 Open Folder (for local run)</a>
+      </div>
+
+    </section>
+    {% endif %}
+  </div>
+
+  <footer class="glassmorphic-header">
+    <p>Project by <span id="creatorName">@dvyanshooo</span></p>
+  </footer>
+
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
