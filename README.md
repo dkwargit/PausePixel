@@ -71,12 +71,12 @@ PausePixel/
 ---
 
 ## Example Use Case
-    Say you have a 2-minute animation and you only want screenshots between the 30–90 second mark, every 4 seconds. This tool lets you do exactly that in one go.
+ Say you have a 2-minute animation and you only want screenshots between the 30–90 second mark, every 4 seconds. This tool lets you do exactly that in one go.
 
 ---
 
 ## About
-    Made by Divyanshu Kumar (ECE student, BIT Mesra). Mostly just for fun — but useful enough to keep around.
-    If you find it handy or have ideas, feel free to fork or raise an issue.
+ Made by Divyanshu Kumar (ECE student, BIT Mesra). Mostly just for fun — but useful enough to keep around.
+ If you find it handy or have ideas, feel free to fork or raise an issue.
 
 ---
