@@ -27,20 +27,20 @@
 
 ## 📂 Folder Structure
 
-PausePixel/
-│
-├── app.py             # Flask server & core logic
-├── requirements.txt   # Python dependencies
-├── static/
-│ ├── uploads/         # Temporarily stores uploaded videos
-│ ├── screenshots/     # Output images go here
-│ ├── assets/          # Static assets like favicon  
-│ ├── style.css        # All styling
-│ └── script.js        # Frontend behavior
-│ 
-├── templates/
-│ └── index.html       # Main web interface
-└── README.md          # You’re reading it
+- PausePixel/
+- │
+- ├── app.py             # Flask server & core logic
+- ├── requirements.txt   # Python dependencies
+- ├── static/
+- │ ├── uploads/         # Temporarily stores uploaded videos
+- │ ├── screenshots/     # Output images go here
+- │ ├── assets/          # Static assets like favicon  
+- │ ├── style.css        # All styling
+- │ └── script.js        # Frontend behavior
+- │ 
+- ├── templates/
+- │ └── index.html       # Main web interface
+- └── README.md          # You’re reading it
 
 
 ---
@@ -65,8 +65,10 @@ PausePixel/
     python app.py
 
  Then open your browser and go to   👉   http://127.0.0.1:5000.
+ 
 
- 🔒 Note: A `.gitignore` file is included to avoid committing virtual environments, temp files, and generated screenshots.
+ # 🔒 Note:
+ A `.gitignore` file is included to avoid committing virtual environments, temp files, and generated screenshots.
 
 ---
 
