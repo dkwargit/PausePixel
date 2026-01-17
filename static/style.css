@@ -25,7 +25,7 @@ body {
   width: 100vw;
   height: 100vh;
   background: linear-gradient(315deg, #fff8dc, #fefae0, #fdf5d7, #fbf2cd, #faedc6, #f9e8bd, #f8e3b4, #f7deb0, #f6d9ac, #f5d5a8, #f6d9ac, #f7deb0, #f8e3b4, #f9e8bd, #faedc6, #fbf2cd, #fdf5d7, #fefae0, #fff8dc);
-  animation: bg-loop 15s ease infinite;
+  animation: bg-loop 10s ease alternate infinite;
   background-size: 200% 200%;
   transition: transform 0.3s;
   z-index: -1;
