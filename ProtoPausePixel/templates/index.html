@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PausePixel — Intelligent Video Screenshot Extractor</title>
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/jpeg" href="{{ url_for('static', filename='assets/GE7fM-TX0AAxE4h.jpeg') }}" />
+
+  <!-- Google Fonts: Plus Jakarta Sans & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet">
+
+  <!-- Core Stylesheet -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+  <!-- Ambient background lighting mesh -->
+  <div class="ambient-glow glow-1"></div>
+  <div class="ambient-glow glow-2"></div>
+  <div class="ambient-glow glow-3"></div>
+
+  <div class="app-layout">
+    <!-- Header / Branding -->
+    <header class="app-header">
+      <div class="brand-container">
+        <div class="brand-icon">
+          <img src="{{ url_for('static', filename='assets/GE7fM-TX0AAxE4h.jpeg') }}" alt="PausePixel Icon"
+            class="brand-avatar">
+          <div class="pulse-ring"></div>
+        </div>
+        <div class="brand-meta">
+          <div class="title-row">
+            <h1 class="brand-title">PausePixel</h1>
+          </div>
+          <p class="brand-subtitle">Frame-accurate screenshot extraction from video at custom intervals & ranges</p>
+        </div>
+      </div>
+
+      <!-- Feature Pill Badges -->
+      <div class="feature-pills">
+        <span class="pill"><span class="pill-dot"></span>OpenCV Engine</span>
+        <span class="pill"><span class="pill-dot"></span>Real-Time Async</span>
+        <span class="pill"><span class="pill-dot"></span>100% Local & Private</span>
+        <span class="pill"><span class="pill-dot"></span>One-Click ZIP</span>
+      </div>
+    </header>
+
+    <main class="main-content">
+      <!-- Section 1: Extraction Studio Form -->
+      <section class="glass-card studio-card" id="studioSection">
+        <form id="uploadForm" action="/upload" method="POST" enctype="multipart/form-data">
+
+          <!-- Drop Area -->
+          <div class="drop-zone" id="dropBox" tabindex="0" role="button"
+            aria-label="Drop video here or click to browse">
+            <input type="file" name="video" id="videoInput" accept="video/mp4,video/x-m4v,video/*" hidden />
+
+            <div class="drop-content" id="dropPrompt">
+              <div class="upload-icon-wrapper">
+                <svg class="upload-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                  <polyline points="17 8 12 3 7 8"></polyline>
+                  <line x1="12" y1="3" x2="12" y2="15"></line>
+                </svg>
+              </div>
+              <h3 class="drop-title">Drag & drop your video here</h3>
+              <p class="drop-sub">or <span class="browse-link">browse from your computer</span></p>
+              <div class="supported-formats">MP4, MKV, MOV, WEBM, AVI up to 1GB</div>
+            </div>
+
+            <!-- Active file info banner -->
+            <div class="file-info-badge" id="fileInfoBadge" style="display: none;">
+              <span class="file-icon">🎬</span>
+              <div class="file-text">
+                <span id="fileNamePreview" class="filename-text">video.mp4</span>
+                <span id="fileSizePreview" class="filesize-text">0 MB</span>
+              </div>
+              <button type="button" class="btn-clear-file" id="clearFileBtn" title="Remove file">✕</button>
+            </div>
+          </div>
+
+          <!-- Video Preview & Quick Scrubber Player (Appears when video is loaded) -->
+          <div class="video-preview-wrapper" id="videoPreviewWrapper" style="display: none;">
+            <div class="video-container">
+              <video id="videoPreview" preload="metadata" controls playsinline></video>
+            </div>
+            <div class="video-helper-bar">
+              <div class="video-metrics">
+                <span>Current Playhead: <strong id="playheadTime" class="mono-text">0.0s</strong></span>
+                <span>Duration: <strong id="videoDuration" class="mono-text">0.0s</strong></span>
+              </div>
+              <div class="scrubber-actions">
+                <button type="button" class="btn-chip" id="btnSetStart">📍 Use as Start Time</button>
+                <button type="button" class="btn-chip" id="btnSetEnd">🏁 Use as End Time</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Extraction Parameters Grid -->
+          <div class="parameters-grid">
+            <!-- Start Time -->
+            <div class="input-card">
+              <label for="start_time" class="input-label">
+                <span>Start Time (seconds)</span>
+                <span class="label-hint">Default: 0.0s</span>
+              </label>
+              <div class="input-field-wrapper">
+                <input type="number" step="0.1" min="0" name="start_time" id="start_time" placeholder="0.0"
+                  class="tech-input" />
+                <span class="input-unit">sec</span>
+              </div>
+            </div>
+
+            <!-- End Time -->
+            <div class="input-card">
+              <label for="end_time" class="input-label">
+                <span>End Time (seconds)</span>
+                <span class="label-hint">Leave blank for full duration</span>
+              </label>
+              <div class="input-field-wrapper">
+                <input type="number" step="0.1" min="0" name="end_time" id="end_time" placeholder="Full video"
+                  class="tech-input" />
+                <span class="input-unit">sec</span>
+              </div>
+            </div>
+
+            <!-- Interval -->
+            <div class="input-card full-width">
+              <div class="label-row">
+                <label for="intervalSelect" class="input-label">
+                  <span>Capture Interval (seconds)</span>
+                  <span class="label-hint">Screenshot taken every X seconds</span>
+                </label>
+                <!-- Quick Preset Chips -->
+                <div class="preset-chips">
+                  <button type="button" class="chip-preset" data-val="0.5">0.5s</button>
+                  <button type="button" class="chip-preset active" data-val="1.0">1.0s</button>
+                  <button type="button" class="chip-preset" data-val="2.0">2.0s</button>
+                  <button type="button" class="chip-preset" data-val="5.0">5.0s</button>
+                </div>
+              </div>
+              <div class="input-field-wrapper">
+                <input type="number" step="any" min="0.1" name="interval" id="intervalSelect" value="1.0"
+                  class="tech-input" />
+                <span class="input-unit">sec</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Estimated Frames Banner -->
+          <div class="estimate-banner" id="estimateBanner">
+            <span class="estimate-icon">💡</span>
+            <span id="estimateText">Estimated yield: <strong>~0 screenshots</strong></span>
+          </div>
+
+          <!-- Submit CTA -->
+          <div class="action-submit-wrapper">
+            <button type="submit" id="processBtn" class="cta-button">
+              <span class="btn-glow"></span>
+              <span class="btn-text">Start Screenshot Extraction</span>
+            </button>
+          </div>
+        </form>
+      </section>
+
+      <!-- Section 2: Real-Time Processing Monitor (Active while extracting) -->
+      <section class="glass-card monitor-card" id="monitorSection" style="display: none;">
+        <div class="monitor-header">
+          <div class="monitor-status-badge">
+            <span class="spinner-dot"></span>
+            <span id="monitorStatusText">Analyzing video stream...</span>
+          </div>
+          <button type="button" id="cancelJobBtn" class="btn-cancel">Cancel Job</button>
+        </div>
+
+        <div class="progress-track-wrapper">
+          <div class="progress-meta">
+            <span class="progress-phase" id="progressPhase">Extracting frames with OpenCV</span>
+            <span class="progress-percentage mono-text" id="progressPercentage">0%</span>
+          </div>
+          <div class="progress-track">
+            <div class="progress-bar" id="progressBar" style="width: 0%;">
+              <div class="progress-laser"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="live-metrics-grid">
+          <div class="metric-item">
+            <span class="metric-label">Extracted Screenshots</span>
+            <span class="metric-value mono-text" id="liveSavedCount">0</span>
+          </div>
+          <div class="metric-item">
+            <span class="metric-label">Current Frame</span>
+            <span class="metric-value mono-text" id="liveCurrentFrame">0</span>
+          </div>
+          <div class="metric-item">
+            <span class="metric-label">Target Frames</span>
+            <span class="metric-value mono-text" id="liveTotalFrames">0</span>
+          </div>
+          <div class="metric-item">
+            <span class="metric-label">Video FPS</span>
+            <span class="metric-value mono-text" id="liveFps">--</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 3: Captured Screenshots Gallery -->
+      {% if screenshots or folder %}
+      <section class="glass-card gallery-card" id="gallerySection">
+        <div class="gallery-header">
+          <div class="gallery-title-wrapper">
+            <h2 class="gallery-title">Captured Screenshots</h2>
+            <span class="count-badge" id="screenshotCountBadge">{{ screenshots|length if screenshots else 0 }}
+              Images</span>
+          </div>
+
+          <div class="gallery-actions-bar">
+            {% if folder %}
+            <a href="{{ url_for('download_zip', folder=folder) }}" class="btn-action btn-zip" id="downloadZipBtn">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+              </svg>
+              <span>Download ZIP</span>
+            </a>
+            <a href="{{ url_for('open_folder', folder=folder) }}" class="btn-action btn-folder" id="openFolderBtn"
+              title="Open folder locally in system file explorer">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+              </svg>
+              <span>Open Local Folder</span>
+            </a>
+            {% endif %}
+            <a href="{{ url_for('index') }}" class="btn-action btn-reset" id="extractAnotherBtn">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="1 4 1 10 7 10"></polyline>
+                <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
+              </svg>
+              <span>Extract Another</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Screenshots Grid -->
+        <div class="screenshots-grid" id="screenshotsGrid">
+          {% if screenshots %}
+          {% for img in screenshots %}
+          <div class="screenshot-item" data-src="/static/screenshots/{{ folder }}/{{ img }}">
+            <div class="image-wrapper">
+              <img src="/static/screenshots/{{ folder }}/{{ img }}" alt="{{ img }}" loading="lazy" />
+              <div class="image-overlay">
+                <button type="button" class="btn-quick-view" title="Preview Fullscreen">🔍</button>
+                <a href="/static/screenshots/{{ folder }}/{{ img }}" download="{{ img }}" class="btn-quick-download"
+                  title="Download Image">⬇️</a>
+              </div>
+            </div>
+            <div class="item-footer">
+              <span class="file-name mono-text">{{ img }}</span>
+            </div>
+          </div>
+          {% endfor %}
+          {% endif %}
+        </div>
+      </section>
+      {% else %}
+      <!-- Dynamic placeholder container for client-side rendered gallery -->
+      <section class="glass-card gallery-card" id="gallerySection" style="display: none;">
+        <div class="gallery-header">
+          <div class="gallery-title-wrapper">
+            <h2 class="gallery-title">Captured Screenshots</h2>
+            <span class="count-badge" id="screenshotCountBadge">0 Images</span>
+          </div>
+
+          <div class="gallery-actions-bar">
+            <a href="#" class="btn-action btn-zip" id="downloadZipBtn">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+              </svg>
+              <span>Download ZIP</span>
+            </a>
+            <a href="#" class="btn-action btn-folder" id="openFolderBtn" title="Open folder locally">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+              </svg>
+              <span>Open Local Folder</span>
+            </a>
+            <a href="{{ url_for('index') }}" class="btn-action btn-reset" id="extractAnotherBtn">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="1 4 1 10 7 10"></polyline>
+                <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
+              </svg>
+              <span>Extract Another</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="screenshots-grid" id="screenshotsGrid"></div>
+      </section>
+      {% endif %}
+
+      <!-- Section 4: Recent Sessions Drawer -->
+      {% if recent_jobs and recent_jobs|length > 0 %}
+      <section class="glass-card history-card" id="historySection">
+        <h3 class="history-title">Recent Extraction Sessions</h3>
+        <div class="history-grid">
+          {% for rj in recent_jobs %}
+          <a href="/screenshots/{{ rj.folder_name }}" class="history-chip">
+            <span class="history-icon">📁</span>
+            <div class="history-meta">
+              <span class="history-name">{{ rj.original_filename }}</span>
+              <span class="history-stats mono-text">{{ rj.saved_count }} images • {{ rj.interval }}s interval</span>
+            </div>
+          </a>
+          {% endfor %}
+        </div>
+      </section>
+      {% endif %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      <p class="footer-text">
+        PausePixel • Frame Extraction Suite • Made by <a href="https://github.com/dkwargit" target="_blank"
+          rel="noopener" class="creator-link">Divyanshu Kumar</a>
+      </p>
+    </footer>
+  </div>
+
+  <!-- Interactive Error Pop-up Modal -->
+  <div class="error-modal" id="errorModal" style="display: none;" role="dialog" aria-modal="true">
+    <div class="error-modal-backdrop" id="errorModalBackdrop"></div>
+    <div class="error-modal-dialog">
+      <div class="error-modal-badge" id="errorModalBadge">⚠️ Oopsie!</div>
+      <div class="error-modal-media">
+        <img id="errorModalImage" src="{{ url_for('static', filename='assets/mb_mock.png') }}" alt="Error Graphic"
+          class="error-modal-img" />
+      </div>
+      <h3 class="error-modal-title" id="errorModalTitle">No video uploaded!</h3>
+      <p class="error-modal-message" id="errorModalMessage">No video uploaded! At least give me something to work with.
+        Duh!! 😐</p>
+      <div class="error-modal-actions">
+        <button type="button" class="btn-modal-action" id="errorModalDismissBtn">← Back to Upload</button>
+        <a href="/error?type=no_video" class="btn-modal-link" id="errorModalPageLink">Open as separate page ↗</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Interactive Lightbox Modal -->
+  <div class="lightbox-modal" id="lightboxModal" style="display: none;" role="dialog" aria-modal="true">
+    <div class="lightbox-backdrop" id="lightboxBackdrop"></div>
+    <div class="lightbox-dialog">
+      <div class="lightbox-topbar">
+        <span class="lightbox-caption mono-text" id="lightboxCaption">ss_1.jpg</span>
+        <div class="lightbox-controls">
+          <a href="#" id="lightboxDownloadBtn" download class="btn-lightbox-tool" title="Download Image">⬇️</a>
+          <button type="button" class="btn-lightbox-close" id="lightboxCloseBtn" title="Close (Esc)">✕</button>
+        </div>
+      </div>
+      <div class="lightbox-image-stage">
+        <button type="button" class="lightbox-nav-btn prev" id="lightboxPrevBtn" title="Previous Image (←)">‹</button>
+        <img id="lightboxImage" src="" alt="Full Preview" />
+        <button type="button" class="lightbox-nav-btn next" id="lightboxNextBtn" title="Next Image (→)">›</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Floating Toast Notifications Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Client-side Logic -->
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+
+</html>

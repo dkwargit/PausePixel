@@ -1,88 +1,96 @@
 # PausePixel
 
-**PausePixel** is a simple web-based tool that lets you extract screenshots from any video at your chosen interval and timestamp range. Built using Flask, OpenCV, and some decent UI work , the idea was to make something quick, clean, and useful.
+**PausePixel** is a modern, high-precision video screenshot extraction tool built with **React**, **Vite**, **TypeScript**, and **Tailwind CSS**. It runs a hardware-accelerated **in-browser extraction engine** using the HTML5 Canvas API and WebCodecs, allowing frame-accurate screenshot capture from video files of any size without uploading them to a remote server.
+
+Designed for **instant 1-click deployment on Vercel**, Netlify, or Cloudflare Pages with **zero backend server costs** and **100% data privacy**.
 
 ---
 
-## 🚀 Features
+## 🚀 Key Features
 
-- Upload any video file (tested on common formats like `.mp4`)
-- Choose **start** and **end** timestamps to trim the portion you want (defaults to the full video if left blank)
-- Select how frequently (in seconds) you want screenshots to be taken (defaults to **1.0 seconds** if left blank)
-- Get a live preview of all screenshots taken
-- **Download all screenshots** together in a single ZIP file
-- **Go to File Location** (if running locally ) 
-- Works directly in browser ; no installs beyond Python requirements
-
----
-
-## 🛠️ Tech Stack
-
-- **Backend**: Python, Flask
-- **Frontend**: HTML, CSS, JavaScript
-- **Processing**: OpenCV
-- Designed to run locally with minimal setup
+- **In-Browser Hardware Acceleration**: Decodes frames locally using the browser's video & canvas engine. Handles multi-gigabyte 4K videos with zero upload lag.
+- **Vercel & Serverless Ready**: Completely bypasses serverless upload payload limits (e.g., Vercel's 4.5MB limit) and function timeouts.
+- **100% Private & Local**: Video data never leaves the user's browser. Safe for confidential and private video processing.
+- **Interactive Video Player & Scrubber**: Scrub through videos in real time with quick-action buttons:
+  - **📍 Set as Start Time**
+  - **🏁 Set as End Time**
+  - **📷 Snap Current Frame** (instant single-screenshot capture)
+- **Custom Intervals & Format Selector**: Export frames as **JPEG**, **PNG (Lossless)**, or **WebP** with preset interval chips (`0.5s`, `1.0s`, `2.0s`, `5.0s`, `10.0s`).
+- **Real-Time Progress HUD**: Animated laser scanline progress bar with live counter metrics (extracted count, current frame, target frame, engine FPS).
+- **Client-Side ZIP Batch Export**: Bundles and compresses all extracted screenshots into a single `.zip` file using `JSZip` directly in browser memory.
+- **Full-Resolution Lightbox**: High-resolution image viewer with keyboard navigation (`←`, `→`, `Escape`) and single-image downloads.
+- **Humorous Error Handling**: Includes custom interactive error modals (`mb_mock.png` and unamused emoji) when video inputs or timing bounds are missing.
 
 ---
 
-## 📂 Folder Structure
+## 🛠️ Modern Tech Stack
 
-- PausePixel/
-- │
-- ├── app.py             # Flask server & core logic
-- ├── requirements.txt   # Python dependencies
-- ├── static/
-- │ ├── uploads/         # Temporarily stores uploaded videos
-- │ ├── screenshots/     # Output images go here
-- │ ├── assets/          # Static assets like favicon  
-- │ ├── style.css        # All styling
-- │ └── script.js        # Frontend behavior
-- │ 
-- ├── templates/
-- │ └── index.html       # Main web interface
-- └── README.md          # You’re reading it
+- **Framework**: [React 18](https://react.dev/) + [Vite](https://vitejs.dev/) + [TypeScript](https://www.typescriptlang.org/)
+- **Styling**: [Tailwind CSS v3](https://tailwindcss.com/) + Custom Glassmorphic Design System
+- **Icons**: [Lucide React](https://lucide.dev/)
+- **Archiving**: [JSZip](https://stuk.github.io/jszip/)
+- **FX**: [Canvas Confetti](https://github.com/catdad/canvas-confetti)
+- **Deployment**: [Vercel](https://vercel.com/) (Preset: Vite)
 
 ---
 
- ## 🔒 Note:
- A `.gitignore` file is included to avoid committing virtual environments, temp files, and generated screenshots.
+## 📂 Project Structure
+
+```
+PausePixel/
+├── public/                 # Static assets & icons
+│   ├── assets/             # Meme & emoji graphics
+│   └── favicon.jpeg
+├── src/
+│   ├── components/         # Modular React components
+│   │   ├── Header.tsx      # Branding & feature pills
+│   │   ├── DropZone.tsx    # Drag-and-drop video upload zone
+│   │   ├── VideoScrubber.tsx # Interactive player with scrubber
+│   │   ├── TimingControls.tsx# Start/end/interval inputs & format selection
+│   │   ├── ProgressHUD.tsx # Real-time extraction progress HUD
+│   │   ├── Gallery.tsx     # Screenshots masonry grid & ZIP download
+│   │   ├── Lightbox.tsx    # Full-screen image viewer with keyboard controls
+│   │   ├── ErrorModal.tsx  # Interactive error dialog
+│   │   └── Toast.tsx       # Floating notification toasts
+│   ├── utils/
+│   │   ├── videoExtractor.ts # In-browser frame extraction engine
+│   │   ├── zipArchiver.ts  # Client-side ZIP creation using JSZip
+│   │   └── formatters.ts   # Time and byte formatting helpers
+│   ├── types.ts            # TypeScript interfaces
+│   ├── App.tsx             # Root application component
+│   ├── index.css           # Tailwind CSS directives & glow utilities
+│   └── main.tsx            # React application entrypoint
+├── index.html              # Vite entrypoint with Google Fonts
+├── package.json            # Node.js dependencies & scripts
+├── tailwind.config.js      # Tailwind design configuration
+├── tsconfig.json           # TypeScript configuration
+├── vercel.json             # Vercel deployment configuration
+└── vite.config.ts          # Vite build configuration
+```
 
 ---
 
-## ⚙️ Setup Instructions
+## ⚙️ Development & Local Run
 
-Clone the repository
- ```bash
- git clone https://github.com/dkwargit/PausePixel.git
- cd PausePixel
- ```
-(Optional) Create and activate virtual environment
- ```bash
- python -m venv venv
- venv\Scripts\activate      # For Windows
- source venv/bin/activate   # For Linux/Mac
- ```
- Install dependencies
- ```bash
- pip install -r requirements.txt
- ```
- Run the app
- ```bash
- python app.py
- ```
- 
- Then open your browser and go to   👉   http://127.0.0.1:5000.
+### 1. Install Dependencies
+```bash
+npm install
+```
+
+### 2. Start Local Development Server
+```bash
+npm run dev
+```
+Open **http://localhost:3000** in your browser.
+
+### 3. Production Build
+```bash
+npm run build
+```
+Build output is generated in the `dist/` directory.
 
 
 ---
 
-## Example Use Case
- Say you have a 2-minute animation and you only want screenshots between the 30–90 second mark, every 4 seconds. This tool lets you do exactly that in one go.
-
----
-
-## About
- Made by Divyanshu Kumar (ECE student, BIT Mesra). Mostly just for fun , but useful enough to keep around.
- If you find it handy or have ideas , feel free to fork or raise an issue.
-
----
+## 👤 Author
+Made by **Divyanshu Kumar** ([@dkwargit](https://github.com/dkwargit)).

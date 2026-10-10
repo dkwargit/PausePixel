@@ -18,7 +18,22 @@ instance/
 .DS_Store
 Thumbs.db
 
+# Node & Vite Build
+node_modules/
+dist/
+.vercel/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
 # Uploads and screenshots - generated at runtime
 static/uploads/
 static/screenshots/
+ProtoPausePixel/static/uploads/
+ProtoPausePixel/static/screenshots/
+ProtoPausePixel/__pycache__/
+ProtoPausePixel/*.db
+ProtoPausePixel/*.zip
 *.zip
+*.db
+*.sqlite3

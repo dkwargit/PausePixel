@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PausePixel — Oopsie!</title>
+  <!-- Favicon using unamused emoji from assets -->
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='assets/Microsoft-Fluentui-Emoji-Flat-Unamused-Face-Flat.512.png') }}" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #090d16;
+      --card-bg: rgba(22, 29, 47, 0.75);
+      --border: rgba(255, 255, 255, 0.1);
+      --primary: #6366f1;
+      --primary-hover: #4f46e5;
+      --accent: #f43f5e;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg);
+      background-image: 
+        radial-gradient(circle at 15% 20%, rgba(99, 102, 241, 0.18) 0%, transparent 40%),
+        radial-gradient(circle at 85% 80%, rgba(244, 63, 94, 0.15) 0%, transparent 40%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      color: var(--text-main);
+      padding: 1.5rem;
+    }
+
+    .error-container {
+      background: var(--card-bg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 2.5rem;
+      max-width: 580px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+      animation: popIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    @keyframes popIn {
+      from {
+        opacity: 0;
+        transform: scale(0.93) translateY(16px);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+      }
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.35rem 0.85rem;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      background: rgba(244, 63, 94, 0.15);
+      color: #fb7185;
+      border: 1px solid rgba(244, 63, 94, 0.3);
+      margin-bottom: 1.25rem;
+    }
+
+    .mock-image-wrapper {
+      margin: 1rem auto 1.5rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .mock-image {
+      max-width: 100%;
+      width: 320px;
+      height: auto;
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.5);
+      transition: transform 0.3s ease;
+    }
+
+    .mock-image.emoji-style {
+      width: 180px;
+      height: 180px;
+      object-fit: contain;
+      border: none;
+      box-shadow: none;
+      filter: drop-shadow(0 15px 25px rgba(0, 0, 0, 0.4));
+    }
+
+    .mock-image:hover {
+      transform: scale(1.03);
+    }
+
+    .error-title {
+      font-size: 1.75rem;
+      font-weight: 800;
+      margin-bottom: 0.75rem;
+      color: #fff;
+    }
+
+    .fallback-text {
+      font-size: 1.05rem;
+      color: #e2e8f0;
+      line-height: 1.6;
+      margin-bottom: 2rem;
+      padding: 1rem 1.25rem;
+      background: rgba(255, 255, 255, 0.04);
+      border-radius: 14px;
+      border: 1px dashed rgba(255, 255, 255, 0.15);
+      font-weight: 600;
+      word-break: break-word;
+    }
+
+    .back-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+      color: #fff;
+      text-decoration: none;
+      font-weight: 700;
+      padding: 0.9rem 2rem;
+      border-radius: 12px;
+      transition: all 0.25s ease;
+      box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+      cursor: pointer;
+    }
+
+    .back-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(99, 102, 241, 0.6);
+      background: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%);
+    }
+
+    .fallback-emoji {
+      display: none;
+      font-size: 4rem;
+      margin: 1rem 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="error-container">
+    <div class="badge">
+      <span>⚠️ Extraction Error</span>
+    </div>
+
+    {% if error_type == 'invalid_timing' or 'timing' in (message|string|lower) or 'interval' in (message|string|lower) %}
+      <h1 class="error-title">Invalid Timing Inputs!</h1>
+      <div class="mock-image-wrapper">
+        <img id="mockingImage"
+             src="{{ url_for('static', filename='assets/Microsoft-Fluentui-Emoji-Flat-Unamused-Face-Flat.512.png') }}"
+             alt="Unamused Emoji"
+             class="mock-image emoji-style">
+        <div id="fallbackEmoji" class="fallback-emoji">😐</div>
+      </div>
+      <div id="fallback" class="fallback-text">
+        {{ message or "Invalid timing inputs! What are these numbers even supposed to mean? 🤨 Check start, end, and interval values." }}
+      </div>
+    {% else %}
+      <h1 class="error-title">No Video Uploaded!</h1>
+      <div class="mock-image-wrapper">
+        <img id="mockingImage"
+             src="{{ url_for('static', filename='assets/mb_mock.png') }}"
+             alt="Mocking meme"
+             class="mock-image">
+        <div id="fallbackEmoji" class="fallback-emoji">😐</div>
+      </div>
+      <div id="fallback" class="fallback-text">
+        {{ message or "No video uploaded! At least give me something to work with. Duh!! 😐" }}
+      </div>
+    {% endif %}
+
+    <div>
+      <a href="{{ url_for('index') }}" class="back-button" id="backToUploadBtn">← Back to Upload</a>
+    </div>
+  </div>
+
+  <script>
+    const image = document.getElementById("mockingImage");
+    const fallbackEmoji = document.getElementById("fallbackEmoji");
+    if (image && fallbackEmoji) {
+      image.onerror = () => {
+        image.style.display = "none";
+        fallbackEmoji.style.display = "block";
+      };
+    }
+  </script>
+</body>
+</html>
